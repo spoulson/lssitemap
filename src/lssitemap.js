@@ -9,18 +9,40 @@ import Promise from 'bluebird';
 
 const optionDefinitions = [
   { name: 'file', type: String, defaultOption: true },
-  { name: 'format', type: String, defaultValue: 'text' }
+  { name: 'format', type: String, defaultValue: 'text' },
+  { name: 'verbose', alias: 'v', type: Boolean, defaultValue: false }
 ];
 
 const options = commandLineArgs(optionDefinitions);
+const parser = new (xmldom.DOMParser)({
+  errorHandler: {
+    warning: trace,
+    error: trace,
+    fatalError: trace
+  }
+});
+const select = xpath.useNamespaces({ sm: 'http://www.sitemaps.org/schemas/sitemap/0.9' });
 
 if (_.isNil(options.file)) {
-  console.log('Error: Sitemap URL is required.\n');
+  console.error('Error: Sitemap URL is required.\n');
   process.exit(1);
 }
 
 fetchSiteMap(options.file)
-  .then(renderOutput);
+  .then(renderOutput)
+  .catch(e => {
+    console.error(firstLine(e));
+  });
+
+function firstLine(text) {
+  return _.first(_.split(text, '\n'));
+}
+
+function trace(message) {
+  if (options.verbose) {
+    console.error(message);
+  }
+}
 
 function renderOutput(resourceUrls) {
   switch (options.format) {
@@ -38,9 +60,11 @@ function renderOutput(resourceUrls) {
 function fetchSiteMap(url, inputUrls = []) {
   return fetchUrl(url)
     .then(content => {
-      const parser = new (xmldom.DOMParser)();
-      const select = xpath.useNamespaces({ sm: 'http://www.sitemaps.org/schemas/sitemap/0.9' });
       const document = parser.parseFromString(content);
+      if (_.isNil(document)) {
+        throw new Error(`Error parsing invalid XML at URL: ${url}`);
+      }
+
       const rootNode = _.first(select('/sm:*', document));
 
       switch (rootNode.nodeName) {
@@ -84,6 +108,7 @@ function fetchUrl(resourceUrl) {
       });
 
     case 'file:':
+    case null:
       return slurpp(urlObj.pathname);
 
     default:

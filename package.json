@@ -6,7 +6,7 @@
   "license": "ISC",
   "main": "src/lssitemap.js",
   "scripts": {
-    "start": "node src/lssitemap.js $*",
+    "start": "babel-node src/lssitemap.js $*",
     "build": "mkdir -p dist; babel src --out-dir babel-dist; browserify --node babel-dist/lssitemap.js > dist/lssitemap.js"
   },
   "dependencies": {

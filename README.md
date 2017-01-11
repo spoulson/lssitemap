@@ -30,6 +30,8 @@ Optional arguments:
 * `--format <text|json>`
  * "text": a simple list of one URL per line.
  * "json": an array of URL strings.
+* `-v`
+ * Verbose output to STDERR when errors are encountered.
 
 Output is rendered to STDOUT.
 
