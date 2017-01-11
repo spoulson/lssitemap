@@ -2,9 +2,12 @@
   "name": "lssitemap",
   "version": "1.0.0",
   "description": "List sitemap resources.",
+  "author": "Shawn Poulson",
+  "license": "ISC",
   "main": "src/lssitemap.js",
   "scripts": {
-    "start": "node src/lssitemap.js $*"
+    "start": "node src/lssitemap.js $*",
+    "build": "mkdir -p dist; browserify --node src/lssitemap.js > dist/lssitemap.js"
   },
   "dependencies": {
     "bluebird": "^3.4.7",
@@ -15,6 +18,7 @@
     "xmldom": "^0.1.27",
     "xpath": "0.0.23"
   },
-  "author": "Shawn Poulson",
-  "license": "ISC"
+  "devDependencies": {
+    "browserify": "^13.3.0"
+  }
 }
