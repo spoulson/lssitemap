@@ -7,7 +7,7 @@
   "main": "src/lssitemap.js",
   "scripts": {
     "start": "node src/lssitemap.js $*",
-    "build": "mkdir -p dist; browserify --node src/lssitemap.js > dist/lssitemap.js"
+    "build": "mkdir -p dist; babel src --out-dir babel-dist; browserify --node babel-dist/lssitemap.js > dist/lssitemap.js"
   },
   "dependencies": {
     "bluebird": "^3.4.7",
@@ -19,6 +19,8 @@
     "xpath": "0.0.23"
   },
   "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-preset-es2015": "^6.18.0",
     "browserify": "^13.3.0"
   }
 }

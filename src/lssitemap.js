@@ -1,11 +1,11 @@
-const fs = require('fs');
-const url = require('url');
-const dom = require('xmldom');
-const xpath = require('xpath');
-const commandLineArgs = require('command-line-args');
-const rp = require('request-promise');
-const _ = require('lodash');
-const Promise = require('bluebird');
+import fs from 'fs';
+import url from 'url';
+import xmldom from 'xmldom';
+import xpath from 'xpath';
+import commandLineArgs from 'command-line-args';
+import rp from 'request-promise';
+import _ from 'lodash';
+import Promise from 'bluebird';
 
 const optionDefinitions = [
   { name: 'file', type: String, defaultOption: true },
@@ -37,8 +37,8 @@ function renderOutput(resourceUrls) {
 
 function fetchSiteMap(url, inputUrls = []) {
   return fetchUrl(url)
-    .then(function (content) {
-      const parser = new (dom.DOMParser)();
+    .then(content => {
+      const parser = new (xmldom.DOMParser)();
       const select = xpath.useNamespaces({ sm: 'http://www.sitemaps.org/schemas/sitemap/0.9' });
       const document = parser.parseFromString(content);
       const rootNode = _.first(select('/sm:*', document));
@@ -48,18 +48,18 @@ function fetchSiteMap(url, inputUrls = []) {
           // Parse sitemap elements.
           const siteMapNodes = select('sm:sitemap', rootNode);
 
-          return Promise.map(siteMapNodes, function (node) {
+          return Promise.map(siteMapNodes, node => {
             const siteMapUrl = _.first(select('sm:loc/text()', node)).nodeValue;
             return fetchSiteMap(siteMapUrl, inputUrls);
           })
-            .then(function (arrays) { return _.flatten(arrays); });
+            .then(arrays => _.flatten(arrays));
         }
 
         case 'urlset': {
           // Parse url elements.
           const urlNodes = select('sm:url', rootNode);
 
-          const resourceUrls = _.map(urlNodes, function (node) {
+          const resourceUrls = _.map(urlNodes, node => {
             const resourceUrl = _.first(select('sm:loc/text()', node)).nodeValue;
             return resourceUrl;
           });
@@ -92,8 +92,8 @@ function fetchUrl(resourceUrl) {
 }
 
 function slurpp(file) {
-  return new Promise(function (resolve) {
-    fs.readFile(file, 'utf8', function (err, content) {
+  return new Promise(resolve => {
+    fs.readFile(file, 'utf8', (err, content) => {
       resolve(content);
     });
   });
