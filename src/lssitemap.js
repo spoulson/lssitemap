@@ -4,6 +4,7 @@ import xmldom from 'xmldom';
 import xpath from 'xpath';
 import commandLineArgs from 'command-line-args';
 import rp from 'request-promise';
+import errors from 'request-promise/errors';
 import _ from 'lodash';
 import Promise from 'bluebird';
 
@@ -103,8 +104,8 @@ function fetchUrl(resourceUrl) {
     case 'http:':
     case 'https:':
       return rp({
-        content: 'GET',
-        url: resourceUrl
+        url: resourceUrl,
+        simple: true
       });
 
     case 'file:':
